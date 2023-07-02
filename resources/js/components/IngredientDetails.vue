@@ -1,27 +1,27 @@
 <template>
     <div>
         <h1>{{ ingredient.name}}</h1>
-        <p>Cost Price: {{ ingredient.cost_price }}</p>
+        <h2>Preț: {{ ingredient_price }}</h2>
         <img :src="'/images/'+ingredient.image" alt="" width="100px" height="100px">
 
         <h2>Schimba ingredientul:</h2>
         <form @submit.prevent="submitForm">
             <div>
-                <label for="name">Name:</label>
+                <label for="name">Nume:</label>
                 <input id="name" v-model="ingredient.name" required>
             </div>
 
             <div>
-                <label for="cost_price">Cost:</label>
+                <label for="cost_price">Preț:</label>
                 <input id="cost_price" type="number" step="0.01" v-model="ingredient_price" required>
             </div>
 
             <div>
-                <label for="image">Image:</label>
+                <label for="image">Imagine:</label>
                 <input type="file" id="image" @change="onFileChange" accept="image/*">
             </div>
 
-            <button type="submit">Update Ingredient</button>
+            <button type="submit">Actualizeaza Ingredient</button>
         </form>
         <button @click="deleteIngredient">Șterge Ingredient</button>
     </div>

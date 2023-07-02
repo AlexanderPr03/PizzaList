@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('pizzas', PizzaController::class);
 Route::post('pizzas/{id}/addIngredients', [PizzaController::class, 'addIngredients']);
+Route::put('pizzas/{id}', [PizzaController::class, 'update']);
 Route::get('pizzas/{id}/ingredients', [PizzaController::class, 'getPizzaIngredients']);
 Route::post('pizzas/{id}/ingredients', [PizzaController::class, 'addIngredients']);
 Route::put('pizzas/{id}/reorderIngredient', [PizzaController::class, 'reorderIngredient']);

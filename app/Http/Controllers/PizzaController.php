@@ -69,12 +69,11 @@ class PizzaController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'selling_price' => 'required',
-            'ingredients' => 'required|array',
-            'ingredients.*' => 'exists:ingredients,id',
+            // 'ingredients' => 'required|array',
+            // 'ingredients.*' => 'exists:ingredients,id',
         ]);
-
+        Log::info($request);
         $pizza = Pizza::find($id);
         $pizza->name = $request->name;
 
@@ -88,15 +87,17 @@ class PizzaController extends Controller
         
         $pizza->save();
 
-        $ingredientIdsWithOrder = [];
-        foreach ($request->ingredients as $ingredient) {
-            $ingredientIdsWithOrder[$ingredient['id']] = ['order' => $ingredient['order']];
-        }
-        $pizza->ingredients()->sync($ingredientIdsWithOrder);
+        // $ingredientIdsWithOrder = [];
+        // foreach ($request->ingredients as $ingredient) {
+        //     $ingredientIdsWithOrder[$ingredient['id']] = ['order' => $ingredient['order']];
+        // }
+        // $pizza->ingredients()->sync($ingredientIdsWithOrder);
 
         return response()->json($pizza);
     }
 
+
+    
     /**
      * Remove the specified resource from storage.
      */
