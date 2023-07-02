@@ -14,7 +14,7 @@
 
         <div>
             <label for="cost_price">Cost :</label>
-            <input id="cost_price" v-model.number="ingredient.cost_price" required>
+            <input id="cost_price" type="number" step="0.01" v-model="ingredient.cost_price" required>
         </div>
 
         <button type="submit">Adaugă ingredient</button>
@@ -43,7 +43,11 @@ export default {
         async submitForm() {
             const formData = new FormData()
             formData.append('name', this.ingredient.name)
-            formData.append('cost_price', this.ingredient.cost_price)
+
+            let priceInDollars = this.ingredient.cost_price;
+            let priceInCents = priceInDollars * 100;
+
+            formData.append('cost_price', priceInCents)
             formData.append('image', this.ingredient.image)
 
             try {

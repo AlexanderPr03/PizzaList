@@ -15462,31 +15462,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     submitForm: function submitForm() {
       var _this = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var formData;
+        var formData, priceInDollars, priceInCents;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
               formData = new FormData();
               formData.append('name', _this.ingredient.name);
-              formData.append('cost_price', _this.ingredient.cost_price);
+              priceInDollars = _this.ingredient.cost_price;
+              priceInCents = priceInDollars * 100;
+              formData.append('cost_price', priceInCents);
               formData.append('image', _this.ingredient.image);
-              _context.prev = 4;
-              _context.next = 7;
+              _context.prev = 6;
+              _context.next = 9;
               return _api__WEBPACK_IMPORTED_MODULE_0__["default"].post('/ingredients', formData);
-            case 7:
+            case 9:
               alert('ingredientul a fost adăugat');
               _this.$router.push('/ingredients');
-              _context.next = 14;
+              _context.next = 16;
               break;
-            case 11:
-              _context.prev = 11;
-              _context.t0 = _context["catch"](4);
+            case 13:
+              _context.prev = 13;
+              _context.t0 = _context["catch"](6);
               console.error('Fail', _context.t0);
-            case 14:
+            case 16:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[4, 11]]);
+        }, _callee, null, [[6, 13]]);
       }))();
     }
   }
@@ -15641,7 +15643,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       ingredient: null,
-      image: null
+      image: null,
+      ingredient_price: null
     };
   },
   created: function created() {
@@ -15657,17 +15660,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           case 3:
             response = _context.sent;
             _this.ingredient = response.data;
-            _context.next = 10;
+            _this.ingredient_price = _this.ingredient.cost_price / 100;
+            _context.next = 11;
             break;
-          case 7:
-            _context.prev = 7;
+          case 8:
+            _context.prev = 8;
             _context.t0 = _context["catch"](0);
             console.error(_context.t0);
-          case 10:
+          case 11:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[0, 7]]);
+      }, _callee, null, [[0, 8]]);
     }))();
   },
   methods: {
@@ -15692,7 +15696,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _context2.next = 4;
               return _api__WEBPACK_IMPORTED_MODULE_0__["default"].put("/ingredients/".concat(_this2.ingredient.id, "/change"), {
                 name: _this2.ingredient.name,
-                cost_price: _this2.ingredient.cost_price,
+                cost_price: _this2.ingredient_price * 100,
                 image: _this2.ingredient.image
               });
             case 4:
@@ -15708,6 +15712,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return _context2.stop();
           }
         }, _callee2, null, [[1, 7]]);
+      }))();
+    },
+    deleteIngredient: function deleteIngredient() {
+      var _this3 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.prev = 0;
+              _context3.next = 3;
+              return _api__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"]("/ingredients/".concat(_this3.ingredient.id));
+            case 3:
+              alert('Ingredient șters cu succes!');
+              _this3.$router.push('/ingredients');
+              _context3.next = 10;
+              break;
+            case 7:
+              _context3.prev = 7;
+              _context3.t0 = _context3["catch"](0);
+              console.error(_context3.t0);
+            case 10:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3, null, [[0, 7]]);
       }))();
     }
   }
@@ -15965,6 +15994,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee5, null, [[0, 8]]);
       }))();
+    },
+    deletePizza: function deletePizza() {
+      var _this6 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.prev = 0;
+              _context6.next = 3;
+              return _api__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"]("/pizzas/".concat(_this6.pizza.id));
+            case 3:
+              alert('Pizza ștearsă cu succes!');
+              _this6.$router.push('/pizzas');
+              _context6.next = 10;
+              break;
+            case 7:
+              _context6.prev = 7;
+              _context6.t0 = _context6["catch"](0);
+              console.error(_context6.t0);
+            case 10:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6, null, [[0, 7]]);
+      }))();
     }
   }
 });
@@ -16074,13 +16128,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     required: ""
   }, null, 32 /* HYDRATE_EVENTS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     id: "cost_price",
+    type: "number",
+    step: "0.01",
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $data.ingredient.cost_price = $event;
     }),
     required: ""
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.ingredient.cost_price, void 0, {
-    number: true
-  }]])]), _hoisted_5], 32 /* HYDRATE_EVENTS */)]);
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.ingredient.cost_price]])]), _hoisted_5], 32 /* HYDRATE_EVENTS */)]);
 }
 
 /***/ }),
@@ -16247,7 +16301,7 @@ var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 }, "Name:", -1 /* HOISTED */);
 var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "cost_price"
-}, "Cost Price:", -1 /* HOISTED */);
+}, "Cost:", -1 /* HOISTED */);
 var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "image"
 }, "Image:", -1 /* HOISTED */);
@@ -16256,7 +16310,7 @@ var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 }, "Update Ingredient", -1 /* HOISTED */);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ingredient.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ingredient.id) + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Cost Price: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ingredient.cost_price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ingredient.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Cost Price: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ingredient.cost_price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: '/images/' + $data.ingredient.image,
     alt: "",
     width: "100px",
@@ -16276,17 +16330,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     type: "number",
     step: "0.01",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $data.ingredient.cost_price = $event;
+      return $data.ingredient_price = $event;
     }),
     required: ""
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.ingredient.cost_price]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.ingredient_price]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "file",
     id: "image",
     onChange: _cache[2] || (_cache[2] = function () {
       return $options.onFileChange && $options.onFileChange.apply($options, arguments);
     }),
     accept: "image/*"
-  }, null, 32 /* HYDRATE_EVENTS */)]), _hoisted_6], 32 /* HYDRATE_EVENTS */)]);
+  }, null, 32 /* HYDRATE_EVENTS */)]), _hoisted_6], 32 /* HYDRATE_EVENTS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    onClick: _cache[4] || (_cache[4] = function () {
+      return $options.deleteIngredient && $options.deleteIngredient.apply($options, arguments);
+    })
+  }, "Șterge Ingredient")]);
 }
 
 /***/ }),
@@ -16314,7 +16372,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: ingredient.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       src: 'images/' + ingredient.image
-    }, null, 8 /* PROPS */, _hoisted_2), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price) + " eur - ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+    }, null, 8 /* PROPS */, _hoisted_2), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price / 100) + " eur - ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
       to: '/ingredients/' + ingredient.id
     }, {
       "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -16381,7 +16439,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[1] || (_cache[1] = function () {
       return $options.addIngredient && $options.addIngredient.apply($options, arguments);
     })
-  }, "Adaugă")])]);
+  }, "Adaugă")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    onClick: _cache[2] || (_cache[2] = function () {
+      return $options.deletePizza && $options.deletePizza.apply($options, arguments);
+    })
+  }, "Șterge pizza")]);
 }
 
 /***/ }),

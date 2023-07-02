@@ -1,7 +1,6 @@
 <template>
     <div>
         <h1>{{ ingredient.name}}</h1>
-        {{ ingredient.id }}
         <p>Cost Price: {{ ingredient.cost_price }}</p>
         <img :src="'/images/'+ingredient.image" alt="" width="100px" height="100px">
 
@@ -13,8 +12,8 @@
             </div>
 
             <div>
-                <label for="cost_price">Cost Price:</label>
-                <input id="cost_price" type="number" step="0.01" v-model="ingredient.cost_price" required>
+                <label for="cost_price">Cost:</label>
+                <input id="cost_price" type="number" step="0.01" v-model="ingredient_price" required>
             </div>
 
             <div>
@@ -24,6 +23,7 @@
 
             <button type="submit">Update Ingredient</button>
         </form>
+        <button @click="deleteIngredient">Șterge Ingredient</button>
     </div>
 </template>
 
@@ -34,13 +34,15 @@ export default {
     data() {
         return {
             ingredient: null,
-            image: null
+            image: null,
+            ingredient_price:null
         }
     },
     async created() {
         try {
             const response = await api.get(`/ingredients/${this.$route.params.id}`)
             this.ingredient = response.data
+            this.ingredient_price = this.ingredient.cost_price/100;
         } catch (error) {
             console.error(error)
         }
@@ -59,8 +61,17 @@ export default {
             // }
             // console.log(formData)
             try {
-                await api.put(`/ingredients/${this.ingredient.id}/change`, {name:this.ingredient.name, cost_price:this.ingredient.cost_price, image:this.ingredient.image})
+                await api.put(`/ingredients/${this.ingredient.id}/change`, {name:this.ingredient.name, cost_price:this.ingredient_price * 100, image:this.ingredient.image})
                 this.$router.push('/ingredients')
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async deleteIngredient() {
+            try {
+                await api.delete(`/ingredients/${this.ingredient.id}`);
+                alert('Ingredient șters cu succes!');
+                this.$router.push('/ingredients');
             } catch (error) {
                 console.error(error)
             }

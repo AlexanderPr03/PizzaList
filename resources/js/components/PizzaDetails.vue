@@ -20,6 +20,7 @@
         </select>
         <button @click="addIngredient">Adaugă</button>
         </div>
+        <button @click="deletePizza">Șterge pizza</button>
     </div>
 </template>
 
@@ -99,6 +100,15 @@ async created() {
                 console.error(error)
             }
         },
+        async deletePizza() {
+            try {
+                await api.delete(`/pizzas/${this.pizza.id}`);
+                alert('Pizza ștearsă cu succes!');
+                this.$router.push('/pizzas');
+            } catch (error) {
+                console.error(error)
+            }
+        }
     },
 }
 </script>
