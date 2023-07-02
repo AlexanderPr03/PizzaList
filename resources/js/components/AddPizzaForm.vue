@@ -9,7 +9,7 @@
 
             <div>
                 <label for="selling_price">Preț de vânzare:</label>
-                <input id="selling_price" type="number" v-model.number="pizza.selling_price" required>
+                <input id="selling_price" type="number" readonly v-model.number="pizza.selling_price" required>
             </div>
 
             <div>
@@ -21,7 +21,7 @@
                 <label for="ingredients">Ingrediente:</label>
                 <select id="ingredients" v-model="newIngredient">
                     <option v-for="ingredient in allIngredients" :key="ingredient.id" :value="ingredient.id">
-                        {{ ingredient.name }} - {{ ingredient.cost_price }} eur
+                        {{ ingredient.name }} - {{ ingredient.cost_price/100 }} eur
                     </option>
                 </select>
                 <button type="button" @click="addIngredient">Adaugă ingredient</button>
@@ -29,7 +29,7 @@
 
             <ul>
                 <li v-for="(ingredient, index) in pizza.ingredients" :key="ingredient.id">
-                    {{ ingredient.name }} - {{ ingredient.cost_price }} eur
+                    {{ ingredient.name }} - {{ ingredient.cost_price/100 }} eur
                     <button type="button" @click="removeIngredient(index)">Scoate</button>
                 </li>
             </ul>
@@ -53,6 +53,7 @@ export default {
         },
         allIngredients: [],
         newIngredient: null,
+        addedIngredients: new Set(),
         }
     },
     async created() {
@@ -70,16 +71,23 @@ export default {
         },
         addIngredient() {
             const ingredient = this.allIngredients.find(i => i.id === this.newIngredient)
-            this.pizza.ingredients.push(ingredient)
+            if (!this.addedIngredients.has(ingredient.id)) {
+                this.pizza.ingredients.push(ingredient)
+                this.pizza.selling_price += (ingredient.cost_price/100)*1.5;
+                this.addedIngredients.add(ingredient.id)
+            }
+            console.log(this.pizza.selling_price*100)
         },
         removeIngredient(index) {
-            this.pizza.ingredients.splice(index, 1)
+            const ingredient = this.pizza.ingredients.splice(index, 1)[0]
+            this.pizza.selling_price -= (ingredient.cost_price/100)*1.5;
+            this.addedIngredients.delete(ingredient.id)
         },
         async submitForm() {
             const formData = new FormData()
             formData.append('name', this.pizza.name)
             formData.append('image', this.pizza.image)
-            formData.append('selling_price', this.pizza.selling_price)
+            formData.append('selling_price', this.pizza.selling_price*100)
             this.pizza.ingredients.forEach((ingredient, index) => {
                 formData.append(`ingredients[${index}]`, ingredient.id)
             })

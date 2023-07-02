@@ -1,11 +1,11 @@
 <template>
     <div>
         <h1>{{ pizza.name }}</h1>
-        <p>Preț {{ pizza.selling_price }}</p>
+        <p>Preț {{ pizza.selling_price/100 }}</p>
         <h2>Ingrediente:</h2>
         <ul>
         <li v-for="ingredient in pizzaIngredients" :key="ingredient.pivot.order">
-            {{ ingredient.pivot.order }}. {{ ingredient.name }} - {{ ingredient.cost_price }} eur
+            {{ ingredient.pivot.order }}. {{ ingredient.name }} - {{ ingredient.cost_price/100 }} eur
             <button @click="removeIngredient(ingredient.pivot.order-1)">Scoate</button>
             <button @click="moveIngredientUp(ingredient.pivot.order-1)" v-if="ingredient.pivot.order > 0">Sus</button>
             <button @click="moveIngredientDown(ingredient.pivot.order-1)" v-if="ingredient.pivot.order < allIngredients.length">Jos</button>
@@ -47,7 +47,6 @@ async created() {
             this.pizzaIngredients=pizzaIngredientsResponse.data
             this.allIngredients = ingredientsResponse.data
 
-            console.log(this.pizzaIngredients)
         } catch (error) {
          console.error(error)
         }

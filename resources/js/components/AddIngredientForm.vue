@@ -9,7 +9,7 @@
 
         <div>
             <label for="image">Imagine:</label>
-            <input type="file" id="image" @change="onFileChange" accept="image/*" required>
+            <input type="file" id="image" @change="onFileChange" accept="image/*">
         </div>
 
         <div>

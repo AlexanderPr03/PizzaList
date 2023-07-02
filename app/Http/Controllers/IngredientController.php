@@ -29,7 +29,6 @@ class IngredientController extends Controller
         $request->validate([
             'name' => 'required|max:255',
             'cost_price' => 'required|numeric',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $ingredient = new Ingredient;

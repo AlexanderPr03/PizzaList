@@ -15523,7 +15523,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         selling_price: 0
       },
       allIngredients: [],
-      newIngredient: null
+      newIngredient: null,
+      addedIngredients: new Set()
     };
   },
   created: function created() {
@@ -15562,10 +15563,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var ingredient = this.allIngredients.find(function (i) {
         return i.id === _this2.newIngredient;
       });
-      this.pizza.ingredients.push(ingredient);
+      if (!this.addedIngredients.has(ingredient.id)) {
+        this.pizza.ingredients.push(ingredient);
+        this.pizza.selling_price += ingredient.cost_price / 100 * 1.5;
+        this.addedIngredients.add(ingredient.id);
+      }
+      console.log(this.pizza.selling_price * 100);
     },
     removeIngredient: function removeIngredient(index) {
-      this.pizza.ingredients.splice(index, 1);
+      var ingredient = this.pizza.ingredients.splice(index, 1)[0];
+      this.pizza.selling_price -= ingredient.cost_price / 100 * 1.5;
+      this.addedIngredients["delete"](ingredient.id);
     },
     submitForm: function submitForm() {
       var _this3 = this;
@@ -15577,7 +15585,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               formData = new FormData();
               formData.append('name', _this3.pizza.name);
               formData.append('image', _this3.pizza.image);
-              formData.append('selling_price', _this3.pizza.selling_price);
+              formData.append('selling_price', _this3.pizza.selling_price * 100);
               _this3.pizza.ingredients.forEach(function (ingredient, index) {
                 formData.append("ingredients[".concat(index, "]"), ingredient.id);
               });
@@ -15848,18 +15856,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             _this.pizza = pizzaResponse.data;
             _this.pizzaIngredients = pizzaIngredientsResponse.data;
             _this.allIngredients = ingredientsResponse.data;
-            console.log(_this.pizzaIngredients);
-            _context.next = 17;
+            _context.next = 16;
             break;
-          case 14:
-            _context.prev = 14;
+          case 13:
+            _context.prev = 13;
             _context.t0 = _context["catch"](0);
             console.error(_context.t0);
-          case 17:
+          case 16:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[0, 14]]);
+      }, _callee, null, [[0, 13]]);
     }))();
   },
   methods: {
@@ -16124,8 +16131,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onChange: _cache[1] || (_cache[1] = function () {
       return $options.onFileChange && $options.onFileChange.apply($options, arguments);
     }),
-    accept: "image/*",
-    required: ""
+    accept: "image/*"
   }, null, 32 /* HYDRATE_EVENTS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     id: "cost_price",
     type: "number",
@@ -16185,6 +16191,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.pizza.name]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     id: "selling_price",
     type: "number",
+    readonly: "",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.pizza.selling_price = $event;
     }),
@@ -16208,7 +16215,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
       key: ingredient.id,
       value: ingredient.id
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price) + " eur ", 9 /* TEXT, PROPS */, _hoisted_6);
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price / 100) + " eur ", 9 /* TEXT, PROPS */, _hoisted_6);
   }), 128 /* KEYED_FRAGMENT */))], 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.newIngredient]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "button",
     onClick: _cache[4] || (_cache[4] = function () {
@@ -16217,7 +16224,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, "Adaugă ingredient")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.pizza.ingredients, function (ingredient, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
       key: ingredient.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price) + " eur ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price / 100) + " eur ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       type: "button",
       onClick: function onClick($event) {
         return $options.removeIngredient(index);
@@ -16370,9 +16377,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.ingredients, function (ingredient) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
       key: ingredient.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+    }, [ingredient.image ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
+      key: 0,
       src: 'images/' + ingredient.image
-    }, null, 8 /* PROPS */, _hoisted_2), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price / 100) + " eur - ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+    }, null, 8 /* PROPS */, _hoisted_2)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price / 100) + " eur - ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
       to: '/ingredients/' + ingredient.id
     }, {
       "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -16407,10 +16415,10 @@ var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 }, "Adaugă ingredient", -1 /* HOISTED */);
 var _hoisted_6 = ["value"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.pizza.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Preț " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.pizza.selling_price), 1 /* TEXT */), _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.pizzaIngredients, function (ingredient) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.pizza.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Preț " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.pizza.selling_price / 100), 1 /* TEXT */), _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.pizzaIngredients, function (ingredient) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
       key: ingredient.pivot.order
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.pivot.order) + ". " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price) + " eur ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.pivot.order) + ". " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(ingredient.cost_price / 100) + " eur ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       onClick: function onClick($event) {
         return $options.removeIngredient(ingredient.pivot.order - 1);
       }
