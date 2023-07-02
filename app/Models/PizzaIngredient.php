@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PizzaIngredient extends Model
 {
     use HasFactory;
+
+
 }

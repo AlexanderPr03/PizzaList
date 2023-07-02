@@ -4,11 +4,11 @@
         <p>Preț {{ pizza.selling_price }}</p>
         <h2>Ingrediente:</h2>
         <ul>
-        <li v-for="(ingredient, index) in pizza.ingredients" :key="ingredient.id">
-            {{ index + 1 }}. {{ ingredient.name }} - {{ ingredient.cost_price }} eur
-            <button @click="removeIngredient(index)">Scoate</button>
-            <button @click="moveIngredientUp(index)" v-if="index > 0">Sus</button>
-            <button @click="moveIngredientDown(index)" v-if="index < pizza.ingredients.length - 1">Jos</button>
+        <li v-for="ingredient in pizzaIngredients" :key="ingredient.pivot.order">
+            {{ ingredient.pivot.order }}. {{ ingredient.name }} - {{ ingredient.cost_price }} eur
+            <button @click="removeIngredient(ingredient.pivot.order-1)">Scoate</button>
+            <button @click="moveIngredientUp(ingredient.pivot.order-1)" v-if="ingredient.pivot.order > 0">Sus</button>
+            <button @click="moveIngredientDown(ingredient.pivot.order-1)" v-if="ingredient.pivot.order < allIngredients.length">Jos</button>
         </li>
         </ul>
         <div>
@@ -29,48 +29,72 @@ import api from '../api'
 export default {
 data() {
     return {
-    pizza: null,
-    allIngredients: [],
-    newIngredient: null,
+        pizza: null,
+        allIngredients: [],
+        pizzaIngredients: [],
+        newIngredient: null,
     }
 },
 async created() {
     try {
-        const [pizzaResponse, ingredientsResponse] = await Promise.all([
+        const [pizzaResponse, pizzaIngredientsResponse, ingredientsResponse] = await Promise.all([
             api.get(`/pizzas/${this.$route.params.id}`),
+            api.get(`/pizzas/${this.$route.params.id}/ingredients`),
             api.get('/ingredients'),
         ])
-        this.pizza = pizzaResponse.data
-        this.allIngredients = ingredientsResponse.data
+            this.pizza = pizzaResponse.data
+            this.pizzaIngredients=pizzaIngredientsResponse.data
+            this.allIngredients = ingredientsResponse.data
+
+            console.log(this.pizzaIngredients)
         } catch (error) {
-        console.error(error)
+         console.error(error)
         }
     },
     methods: {
         async removeIngredient(index) {
         try {
-            const ingredient = this.pizza.ingredients[index]
-            await api.delete(`/pizzas/${this.pizza.id}/ingredients/${ingredient.id}`)
-            this.pizza.ingredients.splice(index, 1)
+            const ingredient = this.pizzaIngredients[index];
+            console.log(ingredient.id)
+            await api.put(`/pizzas/${this.pizza.id}/removeIngredient`, {ingredient_id:ingredient.id})
+            this.pizzaIngredients.splice(index, 1)
         } catch (error) {
             console.error(error)
         }
         },
-        moveIngredientUp(index) {
-            const ingredient = this.pizza.ingredients[index]
-            this.pizza.ingredients.splice(index, 1)
-            this.pizza.ingredients.splice(index - 1, 0, ingredient)
+        async moveIngredientUp(index) {
+            try {
+                const ingredient = this.pizzaIngredients[index]
+                const newOrder = index 
+                await api.put(`/pizzas/${this.pizza.id}/reorderIngredient`, { ingredient_id: ingredient.id, new_order: newOrder })
+                await api.get(`/pizzas/${this.$route.params.id}/ingredients`).then(response=> (this.pizzaIngredients=response.data))
+                // this.pizzaIngredients.splice(index, 1)
+                // this.pizzaIngredients.splice(index - 1, 0, ingredient)
+            } catch (error) {
+                console.error(error)
+            }
         },
-        moveIngredientDown(index) {
-            const ingredient = this.pizza.ingredients[index]
-            this.pizza.ingredients.splice(index, 1)
-            this.pizza.ingredients.splice(index + 1, 0, ingredient)
+        async moveIngredientDown(index) {
+            try {
+                console.log(this.pizza);
+                const ingredient = this.pizzaIngredients[index]
+                const newOrder = index + 2
+                await api.put(`/pizzas/${this.pizza.id}/reorderIngredient`, { ingredient_id: ingredient.id, new_order: newOrder })
+                await api.get(`/pizzas/${this.$route.params.id}/ingredients`).then(response=> (this.pizzaIngredients=response.data))
+
+                // this.pizzaIngredients.splice(index, 1)
+                // this.pizzaIngredients.splice(index + 1, 0, ingredient)
+            } catch (error) {
+                console.error(error)
+            }
         },
         async addIngredient() {
             try {
                 const ingredient = this.allIngredients.find(i => i.id === this.newIngredient)
-                await api.post(`/pizzas/${this.pizza.id}/ingredients`, { ingredient_id: ingredient.id })
-                this.pizza.ingredients.push(ingredient)
+                const order = this.pizzaIngredients.length+1;
+                await api.post(`/pizzas/${this.pizza.id}/ingredients`, { ingredient_id: ingredient.id, order:order }).then(response=>console.log(response));
+                location.reload();
+                
             } catch (error) {
                 console.error(error)
             }

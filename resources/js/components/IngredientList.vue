@@ -3,7 +3,8 @@
         <h1>Ingrediente</h1>
         <ul>
         <li v-for="ingredient in ingredients" :key="ingredient.id">
-            {{ ingredient.name }} - {{ ingredient.cost_price }} eur
+            <img :src="'images/'+ingredient.image">
+            {{ ingredient.name }} - {{ ingredient.cost_price }} eur - <router-link :to="'/ingredients/'+ ingredient.id">Schimba ingredient</router-link>
         </li>
         </ul>
     </div>
